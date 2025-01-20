@@ -1,8 +1,8 @@
 
 Main_Plot()
 
-function Main_Plot()
-gamma_all=[0.0001,1,10000]
+function H=Main_Plot()
+gamma_all=[0.0001,1,10000];
 % 定义不同的标记符号
 markers = ['o', 's', 'd', '^', 'v', '>', '<', 'p', 'h', '*']; 
 Lines = {'-', '--', '-.'};
@@ -14,20 +14,18 @@ for gamma= gamma_all
 
     n=n+1;
     Plot_SFL_Spectrum(gamma,marker,line)
-    Plot_AL_Spectrum(gamma,marker)
+    H=Plot_AL_Spectrum(gamma,marker);
 end
 
 legend('Analytical Results $\lambda=0.5,\eta=10^{-4}$','$\lambda=0.5,\eta=10^{-4}$','$\lambda=1.5,\eta=10^{-4}$','Analytical Results $\lambda=0.5,\eta=10^{0}$','$\lambda=0.5,\eta=10^{0}$','$\lambda=1.5,\eta=10^{0}$','Analytical Results $\lambda=0.5,\eta=10^{4}$','$\lambda=0.5,\eta=10^{4}$','$\lambda=1.5,\eta=10^{4}$','interpreter','latex')
 end
 
 
-function Plot_AL_Spectrum(gamma1,marker1)
+function H=Plot_AL_Spectrum(gamma1,marker1)
 
 lambda1=1.5;
 
 L=100;
-
-
 lambda=lambda1;
 
 H=Ham(L,lambda,gamma1);
@@ -35,8 +33,8 @@ H=Ham(L,lambda,gamma1);
 hold on;
 a1=plot(imag(E),real(E),marker1,'markersize',5,'linewidth',2);
 
-filename = sprintf('AL_Spectrum_gamma_%.4f.csv', gamma1);
-csvwrite(filename, [real(E), imag(E)]);
+filename = sprintf('AL_Spectrum_gamma_%.4f.mat', gamma1);
+save(filename, 'E');
 
 xlabel('$\Im(E)$','interpreter','latex','Fontsize',24)
 ylabel('$\Re(E)$','interpreter','latex','Fontsize',24)
@@ -78,9 +76,11 @@ hold on;
 a1=plot(imag(E),real(E),marker1,'markersize',5,'linewidth',2);
 
 % 保存 data 数据为 CSV 文件
-filename = sprintf('SFL_Spectrum_gamma_%.4f.csv', gamma1);
-csvwrite(filename, data);
-    
+filename = sprintf('SFL_Spectrum_gamma_%.4f.mat', gamma1);
+filename1= 'SFL_Spectrum_Analytic.mat';
+save(filename, 'E');
+save(filename1, 'data');
+
 xlabel('$\Im(E)$','interpreter','latex','Fontsize',24)
 ylabel('$\Re(E)$','interpreter','latex','Fontsize',24)
 view(90,90)
