@@ -1,8 +1,84 @@
-EigenstatesPlot()
+EigenstatesPlot1()
+
+
+
+function EigenstatesPlot1()
+
+digits(50); % 设置变量精度为 50 位
+
+L = 100;
+
+E0=-2.9009;
+
+E0=2.4457;
+
+% E0=1.2715;
+% 使用 vpa 定义 gamma_all
+gamma_all = vpa([10^(-4), 10^(0), 10^(4)]);
+
+for m = 1:length(gamma_all)
+    gamma1 = gamma_all(m); % 使用 vpa 的 gamma1
+    lambda = vpa(1.5);     % 将 lambda 也设置为高精度
+    
+    % 假设 Ham 是用户定义的函数，返回高精度的结果
+    H = vpa(Ham(L, lambda, gamma1));
+    [Ev, E] = eig(H); % Ev 和 E 都是高精度计算结果
+    
+    [r, s] = GetR(L, Ev); % 假设 GetR 函数返回所需的高精度结果
+    
+    log_gamma1 = log(gamma1) / L; % 高精度计算
+    
+    num_curves = L;
+    if m == 1
+        color = [0, 0.4470, 0.7410]; % 蓝色
+    elseif m == 2
+        color = [0.8500, 0.3250, 0.0980]; % 红色
+    elseif m == 3
+        color = [0.4660, 0.6740, 0.1880]; % 绿色
+    end
+    
+    alphas = linspace(0.1, 1, num_curves); % 透明度从 0.1 到 1
+    
+    Ed=double(diag(E));
+    [~,idx]=min(abs(Ed-E0));
+    for i = idx
+        psi = Ev(:, i).*conj(Ev(:, i)); % 高精度计算
+        if m == 1
+            a = semilogy(linspace(1, L, L) / L, psi, 'Color', color, 'marker', 'o', 'linewidth', 2);
+        elseif m == 2
+            b = semilogy(linspace(1, L, L) / L, psi, 'Color', color, 'marker', 's', 'linewidth', 2);
+        elseif m == 3
+            c = semilogy(linspace(1, L, L) / L, psi, 'Color', color, 'marker', 'p', 'linewidth', 2);
+        end
+        hold on;
+    end
+    
+    % 保存结果，文件名保持一致
+    filename = sprintf('Eigenstates_AL_bd_gamma%.0e.mat', double(gamma1)); % 转换为双精度以保存
+    save(filename, 'Ev', 'gamma1', 'lambda', 'L');
+    
+    filename = sprintf('Eigenvalues_AL_bd_gamma%.0e.mat', double(gamma1)); % 转换为双精度以保存
+    save(filename, 'Ed', 'gamma1', 'lambda', 'L');
+    
+    
+    xlabel('$j/L$', 'interpreter', 'latex');
+    ylabel('$|\psi|^2$', 'interpreter', 'latex');
+    
+    set(gca, 'fontsize', 18);
+end
+
+% 图例
+legend([a, b, c], '$\eta=10^{-4}$', '$\eta=1$', '$\eta=10^{4}$', 'interpreter', 'latex');
+
+
+
+end
+
+
 
 function EigenstatesPlot()
 
-L=40;
+L=100;
 
 gamma_all=[10^(-4),10^(0),10^(4)];
 
@@ -108,7 +184,6 @@ b=r(2);
 
 end
 
-
 function testEnergyPlot()
 
 
@@ -189,8 +264,6 @@ view(90,90)
 legend([a1,a2,a3,a4,a5,a6],'$\lambda=0.5,\gamma=10^{-4}$','$\lambda=0.5,\gamma=1$','$\lambda=0.5,\gamma=10^{4}$','$\lambda=0.2,\gamma=10^{-4}$','$\lambda=0.2,\gamma=1$','$\lambda=0.2,\gamma=10^{4}$','interpreter','latex','Fontsize',24,'location','northeast')
 
 end
-
-
 
 function testEnergy()
 
@@ -287,14 +360,6 @@ plot(imag(E)/(2*lambda),real(E)/(2*lambda),'.')
 
 end
 
-
-
-
-
-
-
-
-
 function Eigenvalues()
 
 L=100;
@@ -330,7 +395,7 @@ end
 function H=Ham(L,lambda,gamma)
 % 我们给出相应的哈密顿量
     omega=(sqrt(5)-1)/2;
-    V=2*lambda*diag(cos(2*pi*omega*linspace(1,L,L)));
+    V=2*lambda*diag(cos(2*pi*omega*linspace(0,L-1,L)));
     H=diag(ones(1,L-1),-1)+V;
     H(1,L)=gamma;
 end

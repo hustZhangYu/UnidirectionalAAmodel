@@ -12,9 +12,9 @@ H(1,L)=10^(-4);
 
 m_all=[50,70,90];
 
-data=zeros(L,3);
+data=zeros(L,L);
 n=1;
-for m = m_all
+for m = 1:L
     semilogy(Ev(:,m).*conj(Ev(:,m)),'linewidth',3)
     hold on;
     data(:,n)=Ev(:,m).*conj(Ev(:,m));
