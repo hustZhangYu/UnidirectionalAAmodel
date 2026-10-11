@@ -11,14 +11,14 @@ data2=zeros(1,3)
 
 x=10.^(-5:0.5:5);
 
-c=csvread('Data1.csv',1,0);
+c=readLegacyCsv('Data1.csv');
 semilogx(x,c,'linewidth',4)
 hold on;
 data2(1,1)=c(11);
-c=csvread('Data2.csv',1,0);
+c=readLegacyCsv('Data2.csv');
 semilogx(x,c,'linewidth',4)
 data2(1,2)=c(11);
-c=csvread('Data3.csv',1,0);
+c=readLegacyCsv('Data3.csv');
 semilogx(x,c,'linewidth',4)
 data2(1,3)=c(11);
 
@@ -49,21 +49,21 @@ end
 function DataE=DataAnalysisA()
 
 
-c=csvread('DataERa.csv',1,0);
+c=readLegacyCsv('DataERa.csv');
 DataE=log(c);
 plot(60*ones(1,length(c)),DataE,'.')
 hold on;
-c=csvread('DataERb.csv',1,0);
+c=readLegacyCsv('DataERb.csv');
 DataE=log(c);
 plot(80*ones(1,length(c)),DataE,'.')
-c=csvread('DataERc.csv',1,0);
+c=readLegacyCsv('DataERc.csv');
 DataE=log(c);
 plot(100*ones(1,length(c)),DataE,'.')
-% c=csvread('DataERb.csv',1,0);
-% d=csvread('DataEIb.csv',1,0);
+% c=readLegacyCsv('DataERb.csv');
+% d=readLegacyCsv('DataEIb.csv');
 % DataE(2)=mean(c);
-% c=csvread('DataERc.csv',1,0);
-% d=csvread('DataEIc.csv',1,0);
+% c=readLegacyCsv('DataERc.csv');
+% d=readLegacyCsv('DataEIc.csv');
 % DataE(3)=mean(c);
 
 
@@ -80,12 +80,12 @@ end
 
 
 function DataAnalysisB()
-a=csvread('DataR.csv',1,0);
-b=csvread('DataI.csv',1,0);
+a=readLegacyCsv('DataR.csv');
+b=readLegacyCsv('DataI.csv');
 Data=a+1i*b;
 
-c=csvread('DataER.csv',1,0);
-d=csvread('DataEI.csv',1,0);
+c=readLegacyCsv('DataER.csv');
+d=readLegacyCsv('DataEI.csv');
 DataE=c+1i*d;
 
 plot(log(c))
@@ -117,3 +117,17 @@ ylabel('$\ln(|\psi|)$','interpreter','latex','fontsize',24)
 set(gca,'fontsize',18)
 legend('$m=25$','$m=50$','$m=75$','interpreter','latex','fontsize',24)
 end
+
+function data=readLegacyCsv(filename)
+% Recorded CSV inputs live beside the historical C++ prototypes.
+dataDir=fullfile(fileparts(mfilename('fullpath')),'..','..','Others','Others');
+recordedPath=fullfile(dataDir,filename);
+inputPath=fullfile(pwd,filename);
+if exist(inputPath,'file')==2
+    % Preserve supplied working-directory inputs before recorded examples.
+    data=csvread(inputPath,1,0);
+else
+    data=csvread(recordedPath,1,0);
+end
+end
+

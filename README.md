@@ -37,3 +37,50 @@ This project is for academic and research purposes. If you use the code or data,
 ## Contact
 For questions or collaborations, please contact the repository maintainer.
 
+
+## Exact paths and compatibility entries
+
+The MATLAB source names above live in `Code/code/`. Figure datasets live
+under `Data/Data/` (including `AllDataPlot/` and the individual figure
+folders). High-precision prototypes and CSV inputs live in `Others/Others/`.
+These historical doubled directory names are retained.
+
+Two identical source pairs now have one maintained implementation each:
+
+| Compatibility filename | Canonical implementation |
+| --- | --- |
+| `Code/code/Plot_GBC_AL_closevalue.m` | `Code/code/uniAA_AL_GBC_spectrum_bc.m` |
+| `Others/Others/Test1.cpp` | `Others/Others/Typical_Eigenstates.cpp` |
+
+The MATLAB alias invokes the canonical script. Relative input paths supplied
+by the working directory retain priority. When those inputs are absent, the
+default DataAnalysisC mode falls back to the recorded Data1.csv, Data2.csv and
+Data3.csv by repository-relative path, so copying them into the code folder
+is unnecessary. Alternate analysis modes still require their external data.
+
+```matlab
+run(fullfile(pwd,'Code','code','Plot_GBC_AL_closevalue.m'));
+```
+
+To use regenerated CSV files in another working directory, add Code/code to
+the MATLAB path and invoke the script by name from the data directory. The
+compatibility alias preserves that working directory:
+
+```matlab
+addpath('/path/to/UnidirectionalAAmodel/Code/code');
+cd('/path/to/your/csv-inputs');
+Plot_GBC_AL_closevalue;
+```
+
+The C++ alias includes the canonical translation unit; compile only one of the
+two entry files per executable. It requires MPLAPACK's MPFR backend and the
+MPFR C++ interface, neither bundled here. Some MATLAB files using `vpa`
+require Symbolic Math Toolbox. The Python prototype imports NumPy, Matplotlib
+and mpmath.
+
+The C++ source is a historical prototype: its separate Ev buffer is not
+filled by the eigensolver call, and its symmetric solver and boundary-matrix
+convention need a dedicated numerical review before its printed eigenvectors
+are used. Source deduplication does not validate that prototype. No figures,
+datasets, binaries, or historical entry files were deleted.
+
